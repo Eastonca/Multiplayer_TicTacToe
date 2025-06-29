@@ -4,12 +4,14 @@ import { StreamChat } from 'stream-chat'
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcrypt'
 const app = express()
-const API_KEY = 'fesubwdmacwe'
-const API_SECRET =
-  'yjws56n5hhzvewumk8ufwhucfm4vbnqw67udjjb73qwa35y4krqcjxag7hnfzffw'
 
 app.use(cors())
 app.use(express.json())
+
+import dotenv from 'dotenv';
+dotenv.config();
+const API_KEY = process.env.API_KEY;
+const API_SECRET = process.env.API_SECRET;
 const serverClient = new StreamChat(API_KEY, API_SECRET)
 
 app.post('/signup', async (req, res) => {
@@ -19,6 +21,16 @@ app.post('/signup', async (req, res) => {
     const userId = uuidv4()
     const hashedPassword = await bcrypt.hash(password, 10)
     const token = serverClient.createToken(userId)
+
+    //  Create the user on Stream
+    await serverClient.upsertUser({
+        id: userId,
+        name: username,
+        firstName: firstName,
+        lastName: lastName,
+        hashedPassword: hashedPassword
+      });
+      
     console.log(`token generated`)
     res.json({ token, userId, firstName, lastName, username, hashedPassword })
   } catch (error) {

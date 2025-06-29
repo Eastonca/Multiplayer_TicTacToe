@@ -5,7 +5,7 @@ import { Chat } from "stream-chat-react";
 import Cookies from "universal-cookie";
 import { useState, useEffect } from "react";
 import JoinGame from "./components/JoinGame";
-import '../css/App.css'
+import "../css/App.css";
 
 function App() {
   const API_KEY = "fesubwdmacwe";
@@ -14,22 +14,22 @@ function App() {
   const client = StreamChat.getInstance(API_KEY);
   const [isAuth, setIsAuth] = useState(false);
 
+  const connect = async () => {
     if (token) {
-      client
-        .connectUser(
-          {
-            id: cookies.get("userId"),
-            name: cookies.get("username"),
-            firstName: cookies.get("firstName"),
-            lastName: cookies.get("lastName"),
-            hashedPassword: cookies.get("hashedPassword"),
-          },
-          token
-        )
-        .then((user) => {
-          setIsAuth(true);
-        });
+      await client.connectUser(
+        {
+          id: cookies.get("userId"),
+          name: cookies.get("username"),
+          firstName: cookies.get("firstName"),
+          lastName: cookies.get("lastName"),
+          hashedPassword: cookies.get("hashedPassword"),
+        },
+        token
+      );
+      setIsAuth(true);
     }
+  };
+  connect();
 
   const logOut = () => {
     cookies.remove("token");
