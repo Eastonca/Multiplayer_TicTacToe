@@ -1,8 +1,11 @@
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { StreamChat } from "stream-chat";
+import { Chat } from "stream-chat-react";
 import Cookies from "universal-cookie";
 import { useState, useEffect } from "react";
+import JoinGame from "./components/JoinGame";
+import '../css/App.css'
 
 function App() {
   const API_KEY = "fesubwdmacwe";
@@ -11,7 +14,6 @@ function App() {
   const client = StreamChat.getInstance(API_KEY);
   const [isAuth, setIsAuth] = useState(false);
 
-  useEffect(() => {
     if (token) {
       client
         .connectUser(
@@ -28,7 +30,6 @@ function App() {
           setIsAuth(true);
         });
     }
-  }, []);
 
   const logOut = () => {
     cookies.remove("token");
@@ -45,7 +46,10 @@ function App() {
   return (
     <div className="App">
       {isAuth ? (
-        <button onClick={logOut}>Log Out</button>
+        <Chat client={client}>
+          <JoinGame></JoinGame>
+          <button onClick={logOut}>Log Out</button>
+        </Chat>
       ) : (
         <>
           <SignUp setIsAuth={setIsAuth}></SignUp>
